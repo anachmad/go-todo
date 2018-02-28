@@ -37,8 +37,8 @@ func main() {
 		v1.POST("/", createTodo)
 		v1.GET("/", fetchAllTodo)
 		v1.GET("/:id", fetchSingleTodo)
-		// v1.PUT("/:id", updateTodo)
-		// v1.DELETE("/:id", deleteTodo)
+		v1.PUT("/:id", updateTodo)
+		v1.DELETE("/:id", deleteTodo)
 	}
 	router.Run()
 }
@@ -131,4 +131,20 @@ func updateTodo(c *gin.Context) {
 	completed, _ := strconv.Atoi(c.PostForm("completed"))
 	db.Model(&todo).Update("completed", completed)
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Todo updated successfully!"})
+}
+
+// deleteTodo remove a todo
+func deleteTodo(c *gin.Context) {
+	var todo todoModel
+	todoID := c.Param("id")
+
+	db.First(&todo, todoID)
+
+	if todo.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No todo found!"})
+		return
+	}
+
+	db.Delete(&todo)
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "Todo deleted successfully!"})
 }

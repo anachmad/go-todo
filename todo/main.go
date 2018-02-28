@@ -112,5 +112,5 @@ func fetchSingleTodo(c *gin.Context) {
 	}
 
 	_todo := transformedTodo{ID: todo.ID, Title: todo.Title, Completed: completed}
-	c.JSON(http.StatusOK, gin.H("status": http.StatusOK, "data": _todo))
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": _todo})
 }

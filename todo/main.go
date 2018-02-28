@@ -64,3 +64,30 @@ func createTodo(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated,
 		"message": "Todo item created successfully!", "resourceId": todo.ID})
 }
+
+// fetchAllTodo fetch all todos
+func fetchAllTodo(c *gin.Context) {
+	var todos []todoModel
+	var _todos []transformedTodo
+
+	db.Find(&todos)
+
+	if len(todos) <= 0 {
+		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "No todo found!"})
+		return
+	}
+
+	// transforms the todos for building a good response
+	for _, item := range todos {
+		completed := false
+		if item.Completed == 1 {
+			completed = true
+		} else {
+			completed = false
+		}
+		_todos = append(_todos, transformedTodo{ID: item.ID, Title: item.Title, Completed: completed})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": _todos})
+
+}
